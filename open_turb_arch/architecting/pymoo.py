@@ -195,5 +195,5 @@ class ArchitectingProblemRepair(Repair):
     @staticmethod
     def correct_x(x: np.ndarray, is_discrete_mask) -> np.ndarray:
         x = np.copy(x)
-        x[:, is_discrete_mask] = np.round(x[:, is_discrete_mask].astype(np.float64)).astype(np.int)
+        x[:, is_discrete_mask] = np.round(x[:, is_discrete_mask].astype(np.float64)).astype(int)
         return x

@@ -44,7 +44,8 @@ if __name__ == '__main__':
             'networkx',
             'scipy',  # Best to install via conda
             'ordered_set',
-            'numpy',
+            'numpy<2.4',  # The pyCycle/OpenMDAO forks rely on array-to-scalar conversions that fail in numpy>=2.4
+            'setuptools',  # Provides distutils (used by the OpenMDAO fork) on Python >= 3.12
             'pymoo',
             'lxml',
         ],

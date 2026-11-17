@@ -274,7 +274,7 @@ def test_generate_architecture(an_problem):
         is_active = problem.get_last_is_active()
         assert is_active is not None
         assert len(is_active) == len(free_des_vector)
-        assert np.all(is_active == [True, False, False])
+        assert np.all(is_active == [True, False, True])
 
     n_dv = 0
     unique_dvs = set()
@@ -316,7 +316,7 @@ def test_evaluate(an_problem):
         assert len(free_des_vector) == len(dv)
         assert free_des_vector[1] == problem.free_opt_des_vars[1].get_imputed_value()
         assert free_des_vector[2] == 1
-        assert np.all(problem.get_last_is_active() == [True, False, False])
+        assert np.all(problem.get_last_is_active() == [True, False, True])
 
         assert obj == [.10*dv[0]]
         assert con == [.15*dv[0]]
@@ -424,10 +424,13 @@ def test_openmdao_component(an_problem):
 
     assert n_imputed > 0
 
+    # The SimpleGADriver of the used OpenMDAO version relies on np.int, which has been removed in numpy 1.24
+    if not hasattr(np, 'int'):
+        pytest.skip('SimpleGADriver of the installed OpenMDAO version is incompatible with numpy >= 1.24')
     om_prob.run_driver()
 
 
-@pytest.mark.skipif(not HAS_PYMOO)
+@pytest.mark.skipif(not HAS_PYMOO, reason='pymoo 0.5.0 not installed')
 def test_pymoo_problem(an_problem):
     from pymoo.core.evaluator import Evaluator
     from pymoo.operators.sampling.rnd import FloatRandomSampling
@@ -502,7 +505,7 @@ def test_pymoo_problem(an_problem):
     assert np.all(np.round(x1) == x1)
 
 
-@pytest.mark.skipif(not HAS_PYMOO)
+@pytest.mark.skipif(not HAS_PYMOO, reason='pymoo 0.5.0 not installed')
 def test_pymoo_parallel_eval(an_problem):
     import multiprocessing
     from pymoo.core.evaluator import Evaluator

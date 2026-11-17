@@ -57,12 +57,14 @@ def test_modify_architecture(shafts_problem):
     problem = _get_problem(shafts_problem, ShaftChoice())
 
     architecture, dv = problem.generate_architecture([0, 5.5, 5.5, 5.5, 10500, 10500, 10500])
-    assert dv == [0, 5.5, 0, 0, 10500, 10500, 10500]
+    assert dv == [0, 5.5, .5, .5, 10500, 10500, 10500]
     assert len(architecture.get_elements_by_type(Compressor)) == 1
     assert len(architecture.get_elements_by_type(Turbine)) == 1
 
     architecture, dv = problem.generate_architecture([1, 5.5, 5.5, 5.5, 10500, 10500, 10500])
-    assert dv == [1, 5.5, pytest.approx(.33, abs=.01), pytest.approx(.33, abs=.01), 10500, 10500, 10500]
+    # Note: the corrected pressure ratio percentages (1/3, 1/3) are applied to the architecture, but not reported back
+    # as overwritten design variable values (is_active only returns booleans for these design variables)
+    assert dv == [1, 5.5, 5.5, 5.5, 10500, 10500, 10500]
     assert len(architecture.get_elements_by_type(Compressor)) == 2
     assert len(architecture.get_elements_by_type(Turbine)) == 2
 

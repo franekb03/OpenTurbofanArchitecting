@@ -306,6 +306,7 @@ class ArchitectingProblem:
 
     def extract_metrics(self, architecture: TurbofanArchitecture, imputed_design_vector: DesignVector,
                         results: OperatingMetricsMap) -> Tuple[List[float], List[float], List[float]]:
+        results = self._map_results_to_base_conditions(results)
 
         objective_values = []
         for metric in self.objectives:
@@ -339,6 +340,22 @@ class ArchitectingProblem:
                 metric_values.append(np.nan)
 
         return objective_values, constraint_values, metric_values
+
+    def _map_results_to_base_conditions(self, results: OperatingMetricsMap) -> OperatingMetricsMap:
+        """The analysis problem is deep-copied for every architecture (as choices may modify it), and operating
+        conditions are hashed by identity. Metrics, however, refer to the conditions of the original analysis problem,
+        so make the results also accessible using the original condition objects."""
+        base, current = self._base_an_problem, self._an_problem
+        if results is None or current is base:
+            return results
+
+        results = dict(results)
+        cond_pairs = [(current.design_condition, base.design_condition)] + \
+            list(zip(current.evaluate_conditions, base.evaluate_conditions))
+        for current_cond, base_cond in cond_pairs:
+            if current_cond in results and base_cond not in results:
+                results[base_cond] = results[current_cond]
+        return results
 
     def finalize(self):
         """Prepares the problem so that it can be safely pickled to store the results"""
