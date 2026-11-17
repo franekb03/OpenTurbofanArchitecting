@@ -331,6 +331,7 @@ class ArchitectureCycle(pyc.Cycle):
         print("                       PERFORMANCE CHARACTERISTICS", file=fp, flush=True)
         print("    Mach      Alt       W      Fn      Fg    Fram     OPR     TSFC  ", file=fp, flush=True)
         print("    [-]       [ft]    [kg/s]   [N]     [N]   [-]      [-]    [g/kNs]  ", file=fp, flush=True)
+        data = tuple(np.asarray(value).item() for value in data)  # Values are arrays of size 1
         print(" %7.5f  %7.1f %7.3f %7.1f %7.1f %7.1f %7.3f  %7.5f" % data, file=fp, flush=True)
 
     def _print_disciplines(self, problem: om.Problem, fp=sys.stdout):
